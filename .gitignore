@@ -1,0 +1,23 @@
+# Environment files
+.env
+
+# Docker volumes
+influxdb-data/
+grafana-data/
+
+# k6 output
+result.json
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log

@@ -51,8 +51,10 @@ Replace `192.168.1.100` with your ESP32's actual IP address.
 Start InfluxDB and Grafana (without running the test yet):
 
 ```bash
-docker-compose up -d influxdb grafana
+docker compose up -d influxdb grafana
 ```
+
+> **Note**: Depending on your Docker version, use either `docker compose` (newer) or `docker-compose` (older) command.
 
 This will start:
 - **InfluxDB** on http://localhost:8086
@@ -80,13 +82,13 @@ The dashboard is pre-configured with:
 Execute the k6 test against your ESP32:
 
 ```bash
-docker-compose --profile run up k6
+docker compose --profile run up k6
 ```
 
 Or, if you want to run it in the background:
 
 ```bash
-docker-compose --profile run up -d k6
+docker compose --profile run up -d k6
 ```
 
 You can also run the test locally if you have k6 installed:
@@ -110,6 +112,24 @@ The test will run through the following stages:
 7. Ramp down to 0 users over 30 seconds
 
 Total test duration: **5 minutes**
+
+## Quick Smoke Test
+
+Before running the full performance test, you can run a quick smoke test to verify connectivity:
+
+```bash
+# Using Docker
+docker run --rm -v $(pwd):/scripts -e ESP32_URL=http://192.168.1.100 grafana/k6:latest run /scripts/smoke-test.js
+
+# Or with k6 installed locally
+export ESP32_URL=http://192.168.1.100
+k6 run smoke-test.js
+```
+
+The smoke test runs for 30 seconds with 1 virtual user and provides quick feedback about:
+- ESP32 connectivity
+- Basic response times
+- Error rates
 
 ## Customizing the Test
 
@@ -190,26 +210,26 @@ If k6 cannot reach your ESP32:
 Stop all containers:
 
 ```bash
-docker-compose down
+docker compose down
 ```
 
 Remove volumes (will delete stored metrics):
 
 ```bash
-docker-compose down -v
+docker compose down -v
 ```
 
 Restart everything:
 
 ```bash
-docker-compose up -d influxdb grafana
-docker-compose --profile run up k6
+docker compose up -d influxdb grafana
+docker compose --profile run up k6
 ```
 
 ### No Data in Grafana
 
-1. Check that InfluxDB is running: `docker-compose ps`
-2. Verify k6 is sending data: `docker-compose logs k6`
+1. Check that InfluxDB is running: `docker compose ps`
+2. Verify k6 is sending data: `docker compose logs k6`
 3. Check InfluxDB connection in Grafana: **Configuration** → **Data Sources** → **InfluxDB**
 
 ## Stopping the Services
@@ -217,13 +237,13 @@ docker-compose --profile run up k6
 Stop all services:
 
 ```bash
-docker-compose down
+docker compose down
 ```
 
 To also remove stored data:
 
 ```bash
-docker-compose down -v
+docker compose down -v
 ```
 
 ## Advanced Usage
@@ -234,11 +254,11 @@ You can run multiple tests and compare results:
 
 ```bash
 # Test 1: Low load
-ESP32_URL=http://192.168.1.100 docker-compose --profile run up k6
+ESP32_URL=http://192.168.1.100 docker compose --profile run up k6
 
 # Wait for test to complete, then run Test 2
 # Modify esp32-perftest.js for different load profile
-docker-compose --profile run up k6
+docker compose --profile run up k6
 ```
 
 All results will accumulate in InfluxDB and be visible in Grafana.

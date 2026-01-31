@@ -194,6 +194,39 @@ export default function () {
 - Percentage of failed requests
 - Should be close to 0% for a healthy server
 
+## Security Considerations
+
+### Default Passwords
+
+The `.env.example` file contains default credentials for demonstration purposes. **You should change these passwords before using in any production or shared environment.**
+
+To set custom passwords:
+
+1. Copy `.env.example` to `.env`
+2. Change the following values:
+   ```env
+   GF_SECURITY_ADMIN_PASSWORD=your-secure-password
+   INFLUXDB_ADMIN_PASSWORD=your-secure-password
+   ```
+
+### Network Exposure
+
+By default, the services are exposed on `localhost` only:
+- Grafana: http://localhost:3000
+- InfluxDB: http://localhost:8086
+
+If you need to access these services from other machines, consider:
+- Using a reverse proxy with HTTPS
+- Implementing proper authentication
+- Using firewall rules to restrict access
+
+### Docker Volumes
+
+The setup uses Docker volumes for data persistence. To secure your data:
+- Regularly backup the volumes
+- Restrict access to the Docker host
+- Consider encrypting sensitive data
+
 ## Troubleshooting
 
 ### ESP32 Not Reachable
